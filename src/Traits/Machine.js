@@ -14,6 +14,10 @@ class Machine {
     }
     const options = _.assign(defaultOptions, customOptions)
 
+    Model.prototype._onAfterFind = function (model) {
+      model = model || this
+      model.setStatusObject(model[model.$attr])
+    }
 
     if (!options.$initial)
       throw new Error('It\'s required to set an initial state')
@@ -35,6 +39,9 @@ class Machine {
         throw new Error('Its not possible to change this status: ' + this.getStatus().label + ' => ' + this.getStatusObject(id).label)
       }
       const event = new Event({ 'data': data })
+      if (!this[this.$attr]){
+        this[this.$attr] = this.$initial
+      }
       if (this[this.$attr].onExit(id, event)) {
         this.setStatusObject(id)
         if (!this[this.$attr].onEntry(id, event)) {
@@ -44,12 +51,14 @@ class Machine {
       }
       return true
     }
+
     Model.prototype.allowedStatusChanges = function () {
       const allowedStatusChange = this.$transitions[this.getStatusId()]
       return allowedStatusChange.filter(
         status => this.canChangeTo(status)
       )
     }
+
     Model.prototype.getAvailableStatus = function () {
       const availableStatus = []
       for (let transition in this.$transitions) {
@@ -57,6 +66,7 @@ class Machine {
       }
       return availableStatus
     }
+
     Model.prototype.getAvailableStatusObjects = function () {
       const availableStatus = []
       for (let transition in this.$transitions) {
@@ -77,23 +87,48 @@ class Machine {
       if (this[this.$attr] instanceof Status) {
         return this[this.$attr].id
       } else {
-        return this.$initial
+        return this[this.$attr]
       }
     }
+
     Model.prototype.getStatus = function () {
+      if (!this[this.$attr]){
+        this[this.$attr] = this.$initial
+      }
       if (_.isString(this[this.$attr])) {
         return this.setStatusObject(this.getStatusId())
       } else return this[this.$attr]
     }
+
     Model.prototype.getClassName = function (id) {
       return this.$namespace + '/' + (_.startCase(id)).replace(/\s/g, '')
     }
     Model.prototype.getStatusObject = function (id) {
       const className = this.getClassName(id)
-      return new (use(className))()
+      try {
+        return new (use(className))()
+      } catch (e) {
+        throw new Error( 'Assert that the ' + className + ' exists.')
+      }
+    }
+
+    Model.prototype._convertToString = function (model) {
+      if (model[model.$attr] instanceof Status) {
+        model[model.$attr] = model[model.$attr].id
+      }
     }
 
     _.assign(Model.prototype, options)
+
+    Model.addHook('beforeCreate', Model.prototype._convertToString)
+    Model.addHook('afterCreate', Model.prototype._onAfterFind)
+    Model.addHook('afterUpdate', Model.prototype._onAfterFind)
+    Model.addHook('beforeUpdate', Model.prototype._convertToString)
+    Model.addHook('beforeSave', Model.prototype._convertToString)
+    Model.addHook('afterSave', Model.prototype._onAfterFind)
+    Model.addHook('afterFind', Model.prototype._onAfterFind )
+    Model.addHook('afterFetch', (models) => models.map(Model.prototype._onAfterFind))
+    Model.addHook('afterPaginate', (models) => models.map(Model.prototype._onAfterFind))
   }
 }
 

@@ -1,4 +1,12 @@
 class State {
+  static get ID () {
+    return 'state'
+  }
+  
+  get id () {
+    return this.id || this.constructor.toString()
+  }
+
   constructor () {
     if (!this.id) { this.id = this.constructor.toString() }
     if (!this.label) { this.label = this.constructor.toString() }
@@ -22,6 +30,10 @@ class State {
 
   onEntry (id, event) {
     return true
+  }
+
+  toJSON() {
+    return this.id
   }
 }
 
