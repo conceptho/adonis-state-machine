@@ -55,7 +55,7 @@ class User extends Model {
 
 const user = new User()
 
-user.changeTo(Deleted::ID) // This works
-user.changeTo(Active::ID) // This does not work
+user.changeTo(Deleted.ID) // This works
+user.changeTo(Active.ID) // This does not work
 
 ```
