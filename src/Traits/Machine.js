@@ -29,8 +29,8 @@ class Machine {
     options.$options = _.keys(options.$transitions)
 
 
-    Model.prototype.canChangeTo = function (id) {
-      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && this[this.$attr].canChangeTo(id)
+    Model.prototype.canChangeTo = function (id, event) {
+      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && this[this.$attr].canChangeTo(id, event)
     }
 
     Model.prototype.changeTo = function (id, data = [], force = false) {
@@ -38,10 +38,10 @@ class Machine {
       if (oldStatusId === id) {
         return true
       }
-      if (!this.canChangeTo(id) && force === false) {
+      const event = new Event({ 'data': data })
+      if (!this.canChangeTo(id, event) && force === false) {
         throw new Error('Its not possible to change this status: ' + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
       }
-      const event = new Event({ 'data': data })
       if (!this[this.$attr]){
         this[this.$attr] = this.$initial
       }

@@ -20,7 +20,7 @@ class State {
     return this.stateBehavior.getAvailableStatusObjects()
   }
 
-  canChangeTo (id) {
+  canChangeTo (id, event) {
     return true
   }
 
