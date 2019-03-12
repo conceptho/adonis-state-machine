@@ -4,12 +4,12 @@ class State {
   }
   
   get id () {
-    return this.id || this.constructor.toString()
+    return this.constructor.ID
   }
 
   constructor () {
-    if (!this.id) { this.id = this.constructor.toString() }
-    if (!this.label) { this.label = this.constructor.toString() }
+    if (!this.id) { this.id = this.constructor.ID }
+    if (!this.label) { this.label = this.constructor.ID }
   }
 
   getAvailableStatus () {

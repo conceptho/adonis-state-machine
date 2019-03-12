@@ -10,6 +10,10 @@ class StateMachineProvider extends ServiceProvider {
       const Status = require('../src/Status')
       return Status
     })
+    this.app.bind('Conceptho/StateMachine/Event', () => {
+      const Event = require('../src/Event')
+      return Event
+    })
   }
 }
 
