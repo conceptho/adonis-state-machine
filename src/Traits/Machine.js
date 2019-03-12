@@ -16,7 +16,9 @@ class Machine {
 
     Model.prototype._onAfterFind = function (model) {
       model = model || this
-      model.setStatusObject(model[model.$attr])
+      if(!(model[model.$status] instanceof Status)){
+        model[model.$attr] = model.getStatusObject(model[model.$attr])
+      }
     }
 
     if (!options.$initial)
@@ -30,13 +32,14 @@ class Machine {
     Model.prototype.canChangeTo = function (id) {
       return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && this[this.$attr].canChangeTo(id)
     }
+
     Model.prototype.changeTo = function (id, data = [], force = false) {
       const oldStatusId = this.getStatusId()
       if (oldStatusId === id) {
         return true
       }
       if (!this.canChangeTo(id) && force === false) {
-        throw new Error('Its not possible to change this status: ' + this.getStatus().label + ' => ' + this.getStatusObject(id).label)
+        throw new Error('Its not possible to change this status: ' + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
       }
       const event = new Event({ 'data': data })
       if (!this[this.$attr]){
@@ -74,13 +77,22 @@ class Machine {
       }
       return availableStatus
     }
-    
+
     Model.prototype.setStatusObject = function (id) {
       if (this.$options.indexOf(id) < 0) {
         throw new Error('Status not available')
       }
-      this[this.$attr] = this.getStatusObject(id)
+      this[this.$attr] = this.getStatusObject(id.toString())
+      this[this.$attr].stateBehavior = this
       return this[this.$attr]
+    }
+
+    Model.prototype.toObject = function () {
+      const obj = Object.getPrototypeOf(Model.prototype).toObject.call(this)
+      if(obj[this.$attr]){
+        obj[this.$attr] = obj[this.$attr].toJSON()
+      }
+      return obj
     }
 
     Model.prototype.getStatusId = function () {
@@ -113,6 +125,7 @@ class Machine {
     }
 
     Model.prototype._convertToString = function (model) {
+      model = model || this
       if (model[model.$attr] instanceof Status) {
         model[model.$attr] = model[model.$attr].id
       }

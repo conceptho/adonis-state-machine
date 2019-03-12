@@ -35,6 +35,10 @@ class State {
   toJSON() {
     return this.id
   }
+
+  toString() {
+    return this.id
+  }
 }
 
 module.exports = State
