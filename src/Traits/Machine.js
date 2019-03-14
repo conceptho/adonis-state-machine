@@ -49,10 +49,10 @@ class Machine {
         this.setStatusObject(id)
         if (!(await this[this.$attr].onEntry(id, event))) {
           this.setStatusObject(oldStatusId)
+          return false
         }
-        return false
-      }
-      return true
+        return true
+      } return false
     }
 
     Model.prototype.allowedStatusChanges = function () {
