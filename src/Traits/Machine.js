@@ -29,25 +29,25 @@ class Machine {
     options.$options = _.keys(options.$transitions)
 
 
-    Model.prototype.canChangeTo = function (id, event) {
-      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && this[this.$attr].canChangeTo(id, event)
+    Model.prototype.canChangeTo = async function (id, event) {
+      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && (await this[this.$attr].canChangeTo(id, event))
     }
 
-    Model.prototype.changeTo = function (id, data = [], force = false) {
+    Model.prototype.changeTo = async function (id, data = [], force = false) {
       const oldStatusId = this.getStatusId()
       if (oldStatusId === id) {
         return true
       }
       const event = new Event({ 'data': data })
-      if (!this.canChangeTo(id, event) && force === false) {
+      if (!(await this.canChangeTo(id, event)) && force === false) {
         throw new Error('Its not possible to change this status: ' + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
       }
       if (!this[this.$attr]){
         this[this.$attr] = this.$initial
       }
-      if (this[this.$attr].onExit(id, event)) {
+      if ((await this[this.$attr].onExit(id, event))) {
         this.setStatusObject(id)
-        if (!this[this.$attr].onEntry(id, event)) {
+        if (!(await this[this.$attr].onEntry(id, event))) {
           this.setStatusObject(oldStatusId)
         }
         return false
