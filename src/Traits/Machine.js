@@ -40,7 +40,7 @@ class Machine {
       }
       const event = new Event({ 'data': data })
       if (!(await this.canChangeTo(id, event)) && force === false) {
-        throw new Error(`${this.constrcuctor.name}: Its not possible to change this status: ` + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
+        throw new Error(`${this.constructor.name}: Its not possible to change this status: ` + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
       }
       if (!this[this.$attr]){
         this[this.$attr] = this.$initial
@@ -49,11 +49,11 @@ class Machine {
         this.setStatusObject(id)
         if (!(await this[this.$attr].onEntry(id, event))) {
           this.setStatusObject(oldStatusId)
-          throw new Error(`${this.constrcuctor.name}: The onEntry method at ${this.getStatus().constructor.name} has failed.`)
+          throw new Error(`${this.constructor.name}: The onEntry method at ${this.getStatus().constructor.name} has failed.`)
         }
         return true
       } else {
-        throw new Error(`${this.constrcuctor.name}: The onExit method at ${this.getStatus().constructor.name} has failed.`)
+        throw new Error(`${this.constructor.name}: The onExit method at ${this.getStatus().constructor.name} has failed.`)
       }
     }
 
