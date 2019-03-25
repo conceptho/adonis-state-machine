@@ -48,8 +48,9 @@ class Machine {
       if ((await this[this.$attr].onExit(id, event))) {
         this.setStatusObject(id)
         if (!(await this[this.$attr].onEntry(id, event))) {
+          const newStatus = this[this.$attr]
           this.setStatusObject(oldStatusId)
-          throw new Error(`${this.constructor.name}: The onEntry method at ${this.getStatus().constructor.name} has failed.`)
+          throw new Error(`${this.constructor.name}: The onEntry method at ${newStatus.constructor.name} has failed.`)
         }
         return true
       } else {
