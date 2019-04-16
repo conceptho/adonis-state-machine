@@ -103,6 +103,7 @@ test.group('StateMachine', group => {
   })
 
   test('cant change from Deleted', async assert => {
+    assert.plan(4)
     const User = use('App/Models/User')
     const Active = use('App/Models/Status/User/Active')
     const Deleted = use('App/Models/Status/User/Deleted')
@@ -113,7 +114,6 @@ test.group('StateMachine', group => {
     assert.isTrue(changeToDeleted)
     try {
       await user.changeTo(Active.ID)
-      assert.isTrue(false)
     } catch ({ message }) {
       assert.equal(message, 'User: Its not possible to change this status: deleted => active')
     }
