@@ -131,6 +131,8 @@ class Machine {
       model = model || this
       if (model[model.$attr] instanceof Status) {
         model[model.$attr] = model[model.$attr].id
+      } else {
+        model[model.$attr] = model.getStatusId()
       }
     }
 

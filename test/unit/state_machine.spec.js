@@ -64,6 +64,13 @@ test.group('StateMachine', group => {
     assert.isTrue(user.getStatus().toString() === user.$initial)
   })
 
+  test('saves with initial status', async assert => {
+    const User = use('App/Models/User')
+    const user = new User()
+    await user.save()
+    assert.deepEqual(user.toJSON().status, user.$initial)
+  })
+
   test('getAvailableStatus should be defined in the Traited Model', async assert => {
     const User = use('App/Models/User')
     const user = new User()
