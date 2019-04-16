@@ -6,28 +6,25 @@ const Event = require('../Event')
 class Machine {
   register (Model, customOptions = {}) {
     const defaultOptions = {
-      $namespace : '',
-      $attr : 'status',
-      $initial : '',
-      $transitions : {},
-      $options : []
+      $namespace: '',
+      $attr: 'status',
+      $initial: '',
+      $transitions: {},
+      $options: []
     }
     const options = _.assign(defaultOptions, customOptions)
-
+    console.log(Model)
     Model.prototype._onAfterFind = function (model) {
       model = model || this
-      if(!(model[model.$status] instanceof Status)){
+      if (!(model[model.$status] instanceof Status)) {
         model[model.$attr] = model.getStatusObject(model[model.$attr])
       }
     }
 
-    if (!options.$initial)
-      throw new Error('It\'s required to set an initial state')
-    if (!options.$namespace)
-      throw new Error('Its required to specify the namespace')
+    if (!options.$initial) { throw new Error('It\'s required to set an initial state') }
+    if (!options.$namespace) { throw new Error('Its required to specify the namespace') }
 
     options.$options = _.keys(options.$transitions)
-
 
     Model.prototype.canChangeTo = async function (id, event) {
       return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && (await this[this.$attr].canChangeTo(id, event))
@@ -42,7 +39,7 @@ class Machine {
       if (!(await this.canChangeTo(id, event)) && force === false) {
         throw new Error(`${this.constructor.name}: Its not possible to change this status: ` + this.getStatus().toString() + ' => ' + this.getStatusObject(id).toString())
       }
-      if (!this[this.$attr]){
+      if (!this[this.$attr]) {
         this[this.$attr] = this.$initial
       }
       if ((await this[this.$attr].onExit(id, event))) {
@@ -92,7 +89,7 @@ class Machine {
 
     Model.prototype.toObject = function () {
       const obj = Object.getPrototypeOf(Model.prototype).toObject.call(this)
-      if(obj[this.$attr]){
+      if (obj[this.$attr]) {
         obj[this.$attr] = obj[this.$attr].toJSON()
       }
       return obj
@@ -107,7 +104,7 @@ class Machine {
     }
 
     Model.prototype.getStatus = function () {
-      if (!this[this.$attr]){
+      if (!this[this.$attr]) {
         this[this.$attr] = this.$initial
       }
       if (_.isString(this[this.$attr])) {
@@ -123,7 +120,7 @@ class Machine {
       try {
         return new (use(className))()
       } catch (e) {
-        throw new Error( 'Assert that the ' + className + ' exists.')
+        throw new Error('Assert that the ' + className + ' exists.')
       }
     }
 
@@ -142,7 +139,7 @@ class Machine {
     Model.addHook('beforeUpdate', Model.prototype._convertToString)
     Model.addHook('beforeSave', Model.prototype._convertToString)
     Model.addHook('afterSave', Model.prototype._onAfterFind)
-    Model.addHook('afterFind', Model.prototype._onAfterFind )
+    Model.addHook('afterFind', Model.prototype._onAfterFind)
     Model.addHook('afterFetch', (models) => models.map(Model.prototype._onAfterFind))
     Model.addHook('afterPaginate', (models) => models.map(Model.prototype._onAfterFind))
   }
