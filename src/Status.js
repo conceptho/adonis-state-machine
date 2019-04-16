@@ -2,7 +2,7 @@ class State {
   static get ID () {
     return 'state'
   }
-  
+
   get id () {
     return this.constructor.ID
   }
@@ -32,11 +32,11 @@ class State {
     return true
   }
 
-  toJSON() {
+  toJSON () {
     return this.id
   }
 
-  toString() {
+  toString () {
     return this.id
   }
 }
