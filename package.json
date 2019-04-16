@@ -1,11 +1,13 @@
 {
   "name": "@conceptho/adonis-state-machine",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "eslint:fix": "eslint ./ --fix",
-    "test": "node japaFile.js --inspect"
+    "test": "node japaFile.js --inspect",
+    "coverage:test": "nyc npm test",
+    "coverage:publish": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "license": "MIT",
   "dependencies": {

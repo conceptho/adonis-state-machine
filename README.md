@@ -1,4 +1,7 @@
 # Adonis State Machine
+![Codecov](https://img.shields.io/codecov/c/github/conceptho/adonis-state-machine.svg?logo=codecov&style=for-the-badge)
+![CircleCI branch](https://img.shields.io/circleci/project/github/conceptho/adonis-state-machine/master.svg?logo=circleci&style=for-the-badge)
+![npm (tag)](https://img.shields.io/npm/v/@conceptho/adonis-state-machine/latest.svg?color=green&logo=npm&style=for-the-badge)
 
 Adonis State Machine adds a functionality for handling status changes inside some model.
 
@@ -117,10 +120,10 @@ const user = new User()
 const initialStatus = user.getStatus()
 console.log(initialStatus.toString()) // active
 
-user.changeTo(Unactive.ID) // true
+await user.changeTo(Unactive.ID) // true
 console.log(user.getStatus().toString()) // unactive
-user.changeTo(Deleted.ID) // true
+await user.changeTo(Deleted.ID) // true
 console.log(user.getStatus().toString()) // deleted
-user.changeTo(Active.ID) // throws a error
+await user.changeTo(Active.ID) // throws a error
 
 ```

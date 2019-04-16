@@ -13,7 +13,7 @@ class Machine {
       $options: []
     }
     const options = _.assign(defaultOptions, customOptions)
-    console.log(Model)
+    
     Model.prototype._onAfterFind = function (model) {
       model = model || this
       if (!(model[model.$status] instanceof Status)) {
@@ -27,11 +27,11 @@ class Machine {
     options.$options = _.keys(options.$transitions)
 
     Model.prototype.canChangeTo = async function (id, event) {
-      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatusId()].indexOf(id) >= 0 && (await this[this.$attr].canChangeTo(id, event))
+      return this.$options.indexOf(id) >= 0 && this.$transitions[this.getStatus().id].indexOf(id) >= 0 && (await this[this.$attr].canChangeTo(id, event))
     }
 
     Model.prototype.changeTo = async function (id, data = [], force = false) {
-      const oldStatusId = this.getStatusId()
+      const oldStatusId = this.getStatus().id
       if (oldStatusId === id) {
         return true
       }
@@ -56,7 +56,7 @@ class Machine {
     }
 
     Model.prototype.allowedStatusChanges = function () {
-      const allowedStatusChange = this.$transitions[this.getStatusId()]
+      const allowedStatusChange = this.$transitions[this.getStatus().toString()]
       return allowedStatusChange.filter(
         status => this.canChangeTo(status)
       )
@@ -98,7 +98,10 @@ class Machine {
     Model.prototype.getStatusId = function () {
       if (this[this.$attr] instanceof Status) {
         return this[this.$attr].id
-      } else {
+      } else { 
+        if (!this[this.$attr]) {
+          this[this.$attr] = this.$initial
+        }
         return this[this.$attr]
       }
     }
