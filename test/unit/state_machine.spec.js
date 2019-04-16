@@ -78,6 +78,19 @@ test.group('StateMachine', group => {
     assert.isArray(await user.getAvailableStatus())
   })
 
+  test('getAvailableStatusObjects should be defined in the Traited Model', async assert => {
+    const User = use('App/Models/User')
+    const Status = use('Conceptho/StateMachine/Status')
+    const user = new User()
+    assert.isFunction(user.getAvailableStatusObjects)
+    const availableStatusObjects = await user.getAvailableStatusObjects()
+    assert.isArray(availableStatusObjects)
+    availableStatusObjects.forEach(statusObject => {
+      assert.isObject(statusObject)
+      assert.instanceOf(statusObject, Status)
+    })
+  })
+
   test('allowedStatusChanges should be defined in the Traited Model', async assert => {
     const User = use('App/Models/User')
     const user = new User()
