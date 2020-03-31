@@ -14,9 +14,11 @@ jobs:
         run: npm install
       - name: Test
         run: npm run test
-      - name: Publish
+      - name: Npm Login and Publish
         run: |
           npm version ${{ github.event.release.tag_name }} --no-git-tag-version
+          echo "//registry.npmjs.org/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
