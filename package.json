@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@adonisjs/fold": "^4.0.9",
@@ -31,7 +31,7 @@
     "japa": "^2.0.8",
     "lint-staged": "^8.1.5",
     "nyc": "^14.0.0",
-    "sqlite3": "^4.0.6",
+    "sqlite3": "^4.1.1",
     "supertest": "^4.0.2"
   },
   "author": "Conceptho",
